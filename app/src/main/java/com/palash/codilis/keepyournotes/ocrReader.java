@@ -116,7 +116,7 @@ public class ocrReader extends AppCompatActivity implements View.OnClickListener
                     if (textBlocks.size() == 0) {
                         Toast.makeText(this, "Nothing to be found", Toast.LENGTH_SHORT).show();
                     } else {
-                        scanResults.setText(scanResults.getText() + "Blocks: " + "\n");
+                        scanResults.setText(scanResults.getText() + "\n");
                         scanResults.setText(scanResults.getText() + blocks + "\n");
                         //  scanResults.setText(scanResults.getText() + "---------" + "\n");
                         //scanResults.setText(scanResults.getText() + "Lines: " + "\n");
