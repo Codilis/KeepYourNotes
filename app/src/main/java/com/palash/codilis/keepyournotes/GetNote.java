@@ -9,18 +9,25 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.Text;
+import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.File;
@@ -65,6 +72,10 @@ public class GetNote extends AppCompatActivity implements View.OnClickListener {
         editNote = findViewById(R.id.editNote);
         editNote.setText(text);
 
+        if (savedInstanceState != null) {
+            imageUri = Uri.parse(savedInstanceState.getString(SAVED_INSTANCE_URI));
+            scanResults.setText(savedInstanceState.getString(SAVED_INSTANCE_RESULT));
+        }
         detector = new TextRecognizer.Builder(getApplicationContext()).build();
 
         ActivityCompat.requestPermissions(GetNote.this, new
@@ -208,6 +219,49 @@ public class GetNote extends AppCompatActivity implements View.OnClickListener {
                 src.close();
                 dst.close();
 
+                imageUri = FileProvider.getUriForFile(GetNote.this,
+                        BuildConfig.APPLICATION_ID + ".provider", destination);
+
+                launchMediaScanIntent();
+                Bitmap bitmap = decodeBitmapUri(this, imageUri);
+                if (detector.isOperational() && bitmap != null) {
+                    Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+                    SparseArray<TextBlock> textBlocks = detector.detect(frame);
+                    String blocks = "";
+                    String lines = "";
+                    String words = "";
+                    for (int index = 0; index < textBlocks.size(); index++) {
+                        //extract scanned text blocks here
+                        TextBlock tBlock = textBlocks.valueAt(index);
+                        blocks = blocks + tBlock.getValue() + "\n" + "\n";
+                        for (Text line : tBlock.getComponents()) {
+                            //extract scanned text lines here
+                            lines = lines + line.getValue() + "\n";
+                            for (Text element : line.getComponents()) {
+                                //extract scanned text words here
+                                words = words + element.getValue() + ", ";
+                            }
+                        }
+                    }
+                    if (textBlocks.size() == 0) {
+                        Toast.makeText(this, "Nothing to be found", Toast.LENGTH_SHORT).show();
+                    } else {
+                        editNote.setText(editNote.getText() + "\n");
+                        editNote.setText(editNote.getText() + blocks + "\n");
+                        //  scanResults.setText(scanResults.getText() + "---------" + "\n");
+                        //scanResults.setText(scanResults.getText() + "Lines: " + "\n");
+                        // scanResults.setText(scanResults.getText() + lines + "\n");
+                        /*scanResults.setText(scanResults.getText() + "---------" + "\n");
+                        scanResults.setText(scanResults.getText() + "Words: " + "\n");
+                        scanResults.setText(scanResults.getText() + words + "\n");
+                        */
+                        editNote.setText(editNote.getText() + "---------" + "\n");
+
+                    }
+                } else {
+                    Toast.makeText(this, "Could not setup the detector", Toast.LENGTH_SHORT).show();
+                }
+
 
             } else {
                 Toast.makeText(this, "You haven't picked Image",
@@ -218,6 +272,31 @@ public class GetNote extends AppCompatActivity implements View.OnClickListener {
                     .show();
         }
 
+    }
+
+
+    private Bitmap decodeBitmapUri(Context ctx, Uri uri) throws FileNotFoundException {
+        int targetW = 600;
+        int targetH = 600;
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        //int scaleFactor = Math.min(photoW, photoH);
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+        return BitmapFactory.decodeStream(ctx.getContentResolver()
+                .openInputStream(uri), null, bmOptions);
+    }
+
+    private void launchMediaScanIntent() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(imageUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 }
 
