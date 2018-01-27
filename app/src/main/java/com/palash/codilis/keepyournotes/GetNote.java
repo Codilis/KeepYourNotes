@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
@@ -233,15 +232,15 @@ public class GetNote extends AppCompatActivity implements View.OnClickListener {
                     for (int index = 0; index < textBlocks.size(); index++) {
                         //extract scanned text blocks here
                         TextBlock tBlock = textBlocks.valueAt(index);
-                        blocks = blocks + tBlock.getValue() + "\n" + "\n";
-                        for (Text line : tBlock.getComponents()) {
-                            //extract scanned text lines here
-                            lines = lines + line.getValue() + "\n";
-                            for (Text element : line.getComponents()) {
-                                //extract scanned text words here
-                                words = words + element.getValue() + ", ";
-                            }
-                        }
+                        blocks = blocks + tBlock.getValue() + "\n";
+//                        for (Text line : tBlock.getComponents()) {
+//                            //extract scanned text lines here
+//                            lines = lines + line.getValue() + "\n";
+//                            for (Text element : line.getComponents()) {
+//                                //extract scanned text words here
+//                                words = words + element.getValue() + ", ";
+//                            }
+//                        }
                     }
                     if (textBlocks.size() == 0) {
                         Toast.makeText(this, "Nothing to be found", Toast.LENGTH_SHORT).show();
