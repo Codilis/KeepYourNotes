@@ -43,8 +43,8 @@
 
     <EditText
         android:id="@+id/editNote"
-        android:layout_width="375dp"
-        android:layout_height="225dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:freezesText="false"
         android:gravity="top"
@@ -52,7 +52,7 @@
         android:inputType="text|textAutoCorrect|textAutoComplete|textMultiLine|textPersonName|textPostalAddress"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.015"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -69,10 +69,29 @@
         android:textColor="@android:color/holo_blue_light"
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.104"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.739"
+        app:layout_constraintVertical_bias="0.751"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@android:color/background_light"
+        android:onClick="loadImagefromGallery"
+        android:text="LOAD IMAGE"
+        android:textColor="@android:color/holo_blue_light"
+        android:textStyle="normal|bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.834"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75"
         tools:ignore="HardcodedText" />
 
 
